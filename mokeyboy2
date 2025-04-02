@@ -1,0 +1,100 @@
+from gpiozero import LED, PWMLED, Servo
+import time
+
+# Standard LEDs
+red_led = LED(3)
+yellow_led = LED(4)
+green_led = LED(17)
+
+# RGB LEDs (Right and Left)
+r_red_pwm_pin = PWMLED(14)
+r_green_pwm_pin = PWMLED(15)
+r_blue_pwm_pin = PWMLED(18)
+
+l_red_pwm_pin = PWMLED(27)
+l_green_pwm_pin = PWMLED(22)
+l_blue_pwm_pin = PWMLED(23)
+
+# Servo
+servo = Servo(19)
+
+# Function to smoothly transition RGB colors
+def cycle_rgb(led_red, led_green, led_blue, step_time=0.05):
+    """Gradually cycles through RGB colors."""
+    colors = [
+        (1, 0, 0),  # Red
+        (1, 0.5, 0),  # Orange
+        (1, 1, 0),  # Yellow
+        (0, 1, 0),  # Green
+        (0, 1, 1),  # Cyan
+        (0, 0, 1),  # Blue
+        (0.5, 0, 1),  # Purple
+        (1, 0, 1)   # Magenta
+    ]
+    
+    for r, g, b in colors:
+        led_red.value = r
+        led_green.value = g
+        led_blue.value = b
+        time.sleep(step_time)
+
+# Function to turn all LEDs ON
+def turn_all_leds_on():
+    red_led.on()
+    yellow_led.on()
+    green_led.on()
+    r_red_pwm_pin.value = 1
+    r_green_pwm_pin.value = 1
+    r_blue_pwm_pin.value = 1
+    l_red_pwm_pin.value = 1
+    l_green_pwm_pin.value = 1
+    l_blue_pwm_pin.value = 1
+    print("All LEDs turned ON")
+
+# Function to turn all LEDs OFF
+def turn_all_leds_off():
+    red_led.off()
+    yellow_led.off()
+    green_led.off()
+    r_red_pwm_pin.off()
+    r_green_pwm_pin.off()
+    r_blue_pwm_pin.off()
+    l_red_pwm_pin.off()
+    l_green_pwm_pin.off()
+    l_blue_pwm_pin.off()
+    print("All LEDs turned OFF")
+
+try:
+    # Turn all LEDs ON at the start
+    turn_all_leds_on()
+    time.sleep(1)  # Keep LEDs on for 1 second before proceeding
+
+    # Turn off normal LEDs but keep RGB active
+    red_led.off()
+    yellow_led.off()
+    green_led.off()
+
+    print("Starting RGB LED color cycle")
+
+    print("Starting Servo Sweep")
+    for i in range(3):  # Sweep servo 3 times
+        for val in range(0, 21):
+            pos = (val - 10) / 10
+            servo.value = pos
+            cycle_rgb(l_red_pwm_pin, l_green_pwm_pin, l_blue_pwm_pin)  # Smoothly transition RGB colors
+            print(f"Servo Pos: {pos}")
+            time.sleep(0.1)  # Reduce delay for smoother movement
+        
+        for val in range(20, -1, -1):
+            pos = (val - 10) / 10
+            servo.value = pos
+            cycle_rgb(l_red_pwm_pin, l_green_pwm_pin, l_blue_pwm_pin)  # Smoothly transition RGB colors
+            print(f"Servo Pos: {pos}")
+            time.sleep(0.1)
+
+    print("Test Complete")
+
+finally:
+    print("Cleaning up")
+    turn_all_leds_off()
+    servo.value = None  # Release the servo
