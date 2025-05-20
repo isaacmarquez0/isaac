@@ -1,0 +1,108 @@
+#!/bin/bash
+# ============================================================================
+# Shell script to log a Raspberry Pi Rover Image
+# Source: STEAM Clown - www.steamclown.org 
+# GitHub: https://github.com/jimTheSTEAMClown/VIAM-Party-Rover-0
+# Hacker: Jim Burnham - STEAM Clown, Engineer, Maker, Propmaster & Adrenologist 
+# License: CC BY-NC-SA 4.0, GNU GPL, and EUPL
+# Program/Design Name: RoverStatusLog.sh
+# Description: Logs system configuration, hardware info, installed tools/apps
+# Revision:
+#   0.02 - Updated 05/18/2025 for SVCTE Mechatronics Class
+#   0.01 - Created 05/18/2025
+# ============================================================================
+
+echo "----------------------------------------------------"
+echo "Raspberry Pi Rover OS & Hardware Logging Script"
+echo "----------------------------------------------------"
+echo ""
+pwd
+echo ""
+echo "----------------------------------------------------"
+echo "This script will:"
+echo " - Check for ~/rover/rover_log directory and create it if missing"
+echo " - Log system info to rover_log.log"
+echo " - Optionally run apt update and upgrade"
+echo "----------------------------------------------------"
+echo ""
+
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) 
+            echo "----------------------------------------------------"
+            echo "Running Rover Log Collection"
+            echo "----------------------------------------------------"
+            break;;
+        No ) 
+            echo "----------------------------------------------------"
+            echo "Exiting Without Update"
+            echo "----------------------------------------------------"
+            exit;;
+    esac
+done
+
+# Create logging directory
+LOG_DIR="$HOME/rover/rover_log"
+mkdir -p "$LOG_DIR"
+cd "$LOG_DIR" || { echo "Failed to enter $LOG_DIR"; exit 1; }
+
+LOG_FILE="rover_log.log"
+touch "$LOG_FILE"
+
+# Logging helper function
+log() {
+    echo "$1" | tee -a "$LOG_FILE"
+}
+
+log ""
+log "----------------------------------------------------"
+log "Logging date and time"
+log "----------------------------------------------------"
+date | tee -a "$LOG_FILE"
+log "----------------------------------------------------"
+log "Done logging date and time"
+log ""
+
+# Uncomment below to actually perform updates
+# log "Running system update and upgrade..."
+# sudo apt update | tee -a "$LOG_FILE"
+# sudo apt upgrade -y | tee -a "$LOG_FILE"
+
+log "----------------------------------------------------"
+log "System Info (CPU, Memory, Disk, etc.)"
+log "----------------------------------------------------"
+lscpu | tee -a "$LOG_FILE"
+free -h | tee -a "$LOG_FILE"
+df -h | tee -a "$LOG_FILE"
+
+# Add other checks if needed
+# which python3 | tee -a "$LOG_FILE"
+# python3 --version | tee -a "$LOG_FILE"
+
+log ""
+log "----------------------------------------------------"
+log "    ___    __  _  _  ___ "
+log "   (   \\  /  \\( \\( )(  _)"
+log "    ) ) )( () ))  (  ) _) "
+log "   (__/  \\__/(_)\_)(___) "
+log "All Done!"
+log "----------------------------------------------------"
+log "Next Steps:"
+log " - Set up the vial-server from your Fleet page: https://app.viam.com/robots"
+log " - Optionally run: ./start_viam_server.sh"
+log "----------------------------------------------------"
+log "----------------------------------------------------"
+log "    ___    __  _  _  ___ "
+log "   (   \\  /  \\( \\( )(  _)"
+log "    ) ) )( () ))  (  ) _) "
+log "   (__/  \\__/(_)\_)(___) "
+log "All Done!"
+log "----------------------------------------------------"
+log "Next Steps:"
+log " - Set up the vial-server from your Fleet page:"
+log "   https://app.viam.com/robots"
+log " - Read setup guide here:"
+log "   https://docs.viam.com/installation/#detailed-installation-instructions"
+log " - Optionally run this script to start the server:"
+log "   ./start_viam_server.sh"
+log "----------------------------------------------------"
