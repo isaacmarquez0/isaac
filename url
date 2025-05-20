@@ -106,3 +106,13 @@ log "   https://docs.viam.com/installation/#detailed-installation-instructions"
 log " - Optionally run this script to start the server:"
 log "   ./start_viam_server.sh"
 log "----------------------------------------------------"
+if ! command -v wget &> /dev/null; then
+    log "wget is not installed. You can install it using: sudo apt install wget"
+else
+    log "wget is installed."
+fi
+log "----------------------------------------------------"
+log "Simulating wget without a URL to show usage error..."
+log "----------------------------------------------------"
+wget 2>&1 | tee -a "$LOG_FILE"
+
